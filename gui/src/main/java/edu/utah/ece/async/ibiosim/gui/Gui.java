@@ -886,28 +886,35 @@ public class Gui implements BioObserver, MouseListener, ActionListener, MouseMot
 		if (Desktop.isDesktopSupported()) {
             Desktop desktop = Desktop.getDesktop();
 
-            // Set the "About" menu handler
-            desktop.setAboutHandler(e -> {
-            	about();
-            });
+            if (desktop.isSupported(Desktop.Action.APP_ABOUT)) {
+            	// Set the "About" menu handler
+            	desktop.setAboutHandler(e -> {
+            		about();
+            	});
+            }
 
-            // Set the "Preferences" menu handler
-            desktop.setPreferencesHandler(e -> {
-    			PreferencesDialog.showPreferences(Gui.frame);
-    			getFileTree().setExpandibleIcons(!IBioSimPreferences.INSTANCE.isPlusMinusIconsEnabled());
-    			if (getSBOLDocument() != null) {
-    				getSBOLDocument().setDefaultURIprefix(SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
-    			}
-            });
-
-            // Set the "Quit" menu handler
-            desktop.setQuitHandler((e, response) -> {
-            	exit();
-    			// If we have returned from the above call the user has decided not to quit
-            	response.cancelQuit();
-            	// Perform cleanup before exiting
-                //response.performQuit(); // or response.cancelQuit();
-            });
+            if (desktop.isSupported(Desktop.Action.APP_PREFERENCES)) {
+            	// Set the "Preferences" menu handler
+            	desktop.setPreferencesHandler(e -> {
+            		PreferencesDialog.showPreferences(Gui.frame);
+            		getFileTree().setExpandibleIcons(!IBioSimPreferences.INSTANCE.isPlusMinusIconsEnabled());
+            		if (getSBOLDocument() != null) {
+            			getSBOLDocument().setDefaultURIprefix(SBOLEditorPreferences.INSTANCE.getUserInfo().getURI().toString());
+            		}
+            	});
+            }
+            
+            if (desktop.isSupported(Desktop.Action.APP_QUIT_HANDLER)) {
+            	// Set the "Quit" menu handler
+            	desktop.setQuitHandler((e, response) -> {
+            		exit();
+            		// If we have returned from the above call the user has decided not to quit
+            		response.cancelQuit();
+            		// Perform cleanup before exiting
+            		//response.performQuit(); // or response.cancelQuit();
+            	});
+            }
+            
 		} else {
 			edit.addSeparator();
 			edit.add(pref);
