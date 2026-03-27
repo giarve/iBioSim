@@ -876,9 +876,11 @@ public class Run extends CoreObservable implements ActionListener {
 				  String line = br.readLine ();
 				  if (line == null) break;
 				  if (name.equals("stdin")) {
+					  boolean isProgress = false;
 					  try {
 						  if (line.contains("Time")) {
 							  time = Double.parseDouble(line.substring(line.indexOf('=') + 1, line.length()));
+							  isProgress = true;
 							  if (oldTime > time) {
 								  runNum++;
 							  }
@@ -900,7 +902,7 @@ public class Run extends CoreObservable implements ActionListener {
 					  if (parent!=null) {
 						  message.setInteger(prog);
 						  parent.send(RequestType.REQUEST_PROGRESS, message);
-					  } else{
+					  } else if (!isProgress) {
 						  System.out.println(line);
 					  }
 				  } else {
